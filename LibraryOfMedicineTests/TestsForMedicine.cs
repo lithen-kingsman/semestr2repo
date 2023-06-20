@@ -6,7 +6,7 @@ using System.Xml.Linq;
 namespace LibraryOfMedicineTests
 {
     [TestFixture]
-    public class DrugstoreTests
+    public class MedicineTests
     {
         public static LibraryOfMedicine.Medicine medicine;
 
