@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace LibraryOfMedicine
 {
-    public class Medicine
+    public class Medicine : IComparable<Medicine>
     {
         public readonly int Articul;
         public string Name;
@@ -39,48 +40,35 @@ namespace LibraryOfMedicine
 
         }
 
-        public class Tablets : Medicine
+        public int CompareTo(Medicine other)
         {
-            public int QuantityInPack { get; set; }
-
-            public Tablets (int articul, string name, string producer, int price, int remains, dispensation dispensation, int quantityInPack):
-                base (articul, name, producer, price, remains, dispensation)
+            if (Name != other.Name)
+                return Name.CompareTo(other.Name);
+            return Price.CompareTo(other.Price);
+        }
+        public class ArticulComparer : IComparer<Medicine>
+        {
+            public int Compare(Medicine x, Medicine y)
             {
-                QuantityInPack = quantityInPack;
+                return x.Articul.CompareTo(y.Articul);
             }
-            public override string GetInfo() =>
-                base.GetInfo() + $"Количество таблеток в упаковке: {QuantityInPack} шт. ";
-
         }
 
-        public class Mixture : Medicine
+        public class Pharmacy : IEnumerable<Medicine> 
         {
-            public int BottleVolume { get; set; }
+            public string PharmacyName { get; set; }
+            public string Address { get; set; }
+            public IReadOnlyList<Medicine> AvailableMedicines => medicines;
 
-            public Mixture (int articul, string name, string producer, int price, int remains, dispensation dispensation, int bottleVolume) :
-               base(articul, name, producer, price, remains, dispensation)
+            private List<Medicine> medicines;
+            public Pharmacy(string pharmacyName, string address, IEnumerable<Medicine> medicines)
             {
-                BottleVolume = bottleVolume;
+                PharmacyName = pharmacyName;
+                Address = address;
+                medicines = new List<Medicine>(medicines.Distinct());
             }
-            public override string GetInfo() =>
-               base.GetInfo() + $"Объем бутылки: {BottleVolume} мл ";
+            public IEnumerator<Medicine> GetEnumerator() => medicines.GetEnumerator();
+            IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         }
-
-        public class Ointment : Medicine
-        {
-            public int TubeVolume { get; set; }
-
-            public Ointment (int articul, string name, string producer, int price, int remains, dispensation dispensation, int tubeVolume) :
-               base(articul, name, producer, price, remains, dispensation)
-            {
-                TubeVolume = tubeVolume;
-            }
-            public override string GetInfo() =>
-               base.GetInfo() + $"Объем тубы: {TubeVolume} мг ";
-        }
-
-
-
     }
-
 }
